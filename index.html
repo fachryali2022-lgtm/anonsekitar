@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#ffffff" />
-  <title>AnonSekitar — Obrolan Anonim Terdekat</title>
+  <title>AnonSekitar v2 — Making Love & Friend Mode</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #f3f4f6;
+      background-color: #f1f5f9;
       overscroll-behavior-y: contain;
     }
     .app-shell {
@@ -27,7 +27,7 @@
       flex-direction: column;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 0 35px rgba(15, 23, 42, 0.08);
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -37,84 +37,156 @@
 
 <div class="app-shell">
 
-  <!-- ==================== 1. LOGIN / DAFTAR USERNAME & PASSWORD ==================== -->
-  <div id="view-auth" class="flex-1 flex flex-col justify-center p-6 overflow-y-auto no-scrollbar bg-white">
-    <div class="mb-6">
-      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold mb-3">
-        <i data-lucide="ghost" class="w-4 h-4 text-rose-600"></i> AnonSekitar
+  <!-- ==================== 1. AUTH: LOGIN & REGISTER TERPISAH ==================== -->
+  <div id="view-auth" class="flex-1 flex flex-col overflow-y-auto no-scrollbar p-5 bg-white">
+    <div class="mb-4">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-600 text-xs font-extrabold mb-2">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AnonSekitar v2
       </div>
-      <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Masuk Obrolan Anonim</h1>
-      <p class="text-xs text-slate-500 mt-1">Tanpa foto, cukup username & password. Cocokkan 10 orang terdekat di sekitarmu.</p>
+      <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Obrolan Anonim Terdekat</h1>
+      <p class="text-xs text-slate-500 mt-0.5">Tanpa foto. Cocokkan 10 orang terdekat dengan mode <span class="font-bold text-slate-700">Making Love</span> atau <span class="font-bold text-slate-700">Friend Mode</span>.</p>
     </div>
 
-    <!-- Pemberitahuan Kejujuran & Etika -->
-    <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200/80 mb-5 flex items-start gap-2.5">
-      <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-      <p class="text-[11px] leading-relaxed text-amber-900 font-medium">
-        <span class="font-bold">Pemberitahuan:</span> Harap berhati-hati saat mengobrol. <span class="font-bold">Jangan menjadi faker</span> dan <span class="font-bold">jangan berpura-pura</span> menjadi orang lain.
+    <!-- Peringatan Luas & Dasar Hukum -->
+    <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 mb-4 space-y-1.5">
+      <div class="flex items-center gap-2 text-amber-950 font-extrabold text-xs">
+        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 shrink-0"></i>
+        <span>Peringatan Keamanan, Kejujuran & Dasar Hukum</span>
+      </div>
+      <p class="text-[11px] leading-relaxed text-amber-900">
+        Berhati-hatilah saat berinteraksi. <span class="font-bold">Jangan menjadi faker</span> dan <span class="font-bold">jangan berpura-pura</span> menjadi orang lain atau memalsukan identitas.
       </p>
+      <ul class="text-[10.5px] leading-snug text-amber-900/90 list-disc pl-4 space-y-0.5">
+        <li><span class="font-bold">UU ITE (UU No. 11/2008 & perubahannya):</span> Dilarang menyebarkan informasi bohong/menyesatkan yang merugikan, pemerasan/ancaman, atau konten melanggar kesusilaan.</li>
+        <li><span class="font-bold">UU PDP (UU No. 27/2022):</span> Dilarang menyalahgunakan, membocorkan, atau memanipulasi data pribadi orang lain tanpa hak.</li>
+        <li><span class="font-bold">KUHP:</span> Penipuan, pemalsuan identitas/dokumen, pencemaran nama baik, serta pelecehan/kekerasan verbal memiliki konsekuensi pidana.</li>
+      </ul>
     </div>
 
-    <form id="auth-form" class="space-y-3.5">
-      <div>
-        <label class="block text-xs font-bold text-slate-700 mb-1">Username</label>
-        <input type="text" id="auth-username" placeholder="contoh: warga_bandung" required
-          class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:border-rose-500 focus:bg-white transition" />
-      </div>
+    <!-- Switcher Tab: LOGIN vs REGISTER -->
+    <div class="grid grid-cols-2 p-1 rounded-xl bg-slate-100 mb-4 shrink-0">
+      <button type="button" id="tab-btn-login" onclick="setAuthMode('login')"
+        class="py-2 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-xs transition">
+        LOGIN
+      </button>
+      <button type="button" id="tab-btn-register" onclick="setAuthMode('register')"
+        class="py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition">
+        REGISTER
+      </button>
+    </div>
 
+    <!-- FORM LOGIN -->
+    <form id="form-login" class="space-y-3">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Username Akun</label>
+        <input type="text" id="login-username" placeholder="Masukkan username kamu" required
+          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:border-rose-500 focus:bg-white" />
+      </div>
       <div>
         <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
-        <input type="password" id="auth-password" placeholder="Masukkan password" required
-          class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:border-rose-500 focus:bg-white transition" />
+        <input type="password" id="login-password" placeholder="Masukkan password" required
+          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:border-rose-500 focus:bg-white" />
+      </div>
+
+      <p id="login-error" class="hidden text-xs font-bold text-rose-600"></p>
+
+      <button type="submit" id="btn-login"
+        class="w-full py-3 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 active:scale-[0.98] transition">
+        Masuk Sekarang
+      </button>
+    </form>
+
+    <!-- FORM REGISTER -->
+    <form id="form-register" class="hidden space-y-3 pb-6">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Buat Username</label>
+        <input type="text" id="reg-username" placeholder="contoh: reza_bdg" required
+          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:border-rose-500 focus:bg-white" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+          <input type="password" id="reg-password" placeholder="Minimal 4 karakter" required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:border-rose-500 focus:bg-white" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nama Tampilan</label>
+          <input type="text" id="reg-nama" placeholder="Nama panggilan" required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:border-rose-500 focus:bg-white" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Gender Saya</label>
+          <select id="reg-gender-saya"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold focus:outline-none focus:border-rose-500 focus:bg-white">
+            <option value="Pria">Pria</option>
+            <option value="Wanita">Wanita</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Siapa Yang Saya Cari</label>
+          <select id="reg-cari-gender"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold focus:outline-none focus:border-rose-500 focus:bg-white">
+            <option value="Semua">Semua Gender</option>
+            <option value="Wanita">Wanita</option>
+            <option value="Pria">Pria</option>
+          </select>
+        </div>
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Tampilan (Opsional saat daftar baru)</label>
-        <input type="text" id="auth-nama" placeholder="Nama panggilan kamu"
-          class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:outline-none focus:border-rose-500 focus:bg-white transition" />
+        <label class="block text-xs font-bold text-slate-700 mb-1">Mode Interaksi</label>
+        <select id="reg-mode"
+          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-bold text-rose-700 focus:outline-none focus:border-rose-500 focus:bg-white">
+          <option value="FRIEND">Friend Mode (Teman Ngobrol Santai)</option>
+          <option value="MAKING_LOVE">Making Love Mode (Romantis & PDKT)</option>
+        </select>
       </div>
 
       <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="map-pin" class="w-4 h-4 text-rose-600"></i>
-          <span id="auth-loc-status" class="text-xs font-semibold text-slate-600">Mendeteksi lokasi...</span>
+          <span id="reg-loc-status" class="text-xs font-semibold text-slate-600">Mendeteksi lokasi...</span>
         </div>
-        <button type="button" onclick="captureGPS(false)" class="text-xs font-bold text-rose-600">Cek Lokasi</button>
+        <button type="button" onclick="captureGPS(false)" class="text-xs font-bold text-rose-600">Cek GPS</button>
       </div>
 
-      <p id="auth-error" class="hidden text-xs font-semibold text-rose-600"></p>
+      <p id="reg-error" class="hidden text-xs font-bold text-rose-600"></p>
 
-      <button type="submit" id="btn-auth"
-        class="w-full py-3.5 rounded-xl bg-rose-600 text-white font-bold text-sm hover:bg-rose-700 active:scale-[0.98] transition">
-        Masuk / Daftar Otomatis
+      <button type="submit" id="btn-register"
+        class="w-full py-3 rounded-xl bg-rose-600 text-white font-bold text-sm hover:bg-rose-700 active:scale-[0.98] transition">
+        Daftar Akun Baru
       </button>
     </form>
   </div>
 
-  <!-- ==================== 2. HALAMAN UTAMA (10 TERDEKAT & OBROLAN) ==================== -->
+  <!-- ==================== 2. HALAMAN UTAMA ==================== -->
   <div id="view-main" class="hidden flex-1 flex flex-col h-full overflow-hidden">
     
     <!-- Header -->
     <header class="px-4 py-3 bg-white border-b border-slate-100 flex items-center justify-between shrink-0">
-      <div>
+      <div class="min-w-0">
         <div class="flex items-center gap-1.5">
-          <i data-lucide="ghost" class="w-4 h-4 text-rose-600"></i>
           <span class="font-extrabold text-base text-slate-900">AnonSekitar</span>
+          <span id="badge-mode-header" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-50 text-rose-600">FRIEND MODE</span>
         </div>
-        <p id="header-user-info" class="text-[11px] text-slate-500 font-medium">-</p>
+        <p id="header-meta" class="text-[11px] text-slate-500 font-medium truncate">-</p>
       </div>
 
       <button onclick="updateLocationNow()" id="btn-loc"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 text-xs font-bold transition active:scale-95">
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 text-xs font-bold transition active:scale-95 shrink-0">
         <i data-lucide="navigation" class="w-3.5 h-3.5 text-rose-600"></i>
-        <span id="btn-loc-text">Perbarui Lokasi</span>
+        <span id="btn-loc-text">Lokasi</span>
       </button>
     </header>
 
-    <!-- Banner Pemberitahuan Ringkas -->
-    <div class="px-4 py-2 bg-amber-50 border-b border-amber-100 text-[11px] text-amber-900 font-medium flex items-center gap-2 shrink-0">
-      <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i>
-      <span>Berhati-hati saat mengobrol. Jangan jadi faker & jangan berpura-pura.</span>
+    <!-- Peringatan Singkat di Aplikasi -->
+    <div class="px-4 py-1.5 bg-amber-50 border-b border-amber-100 text-[10.5px] text-amber-900 font-medium flex items-center gap-1.5 shrink-0">
+      <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i>
+      <span class="truncate">Berhati-hati: jangan jadi faker/berpura-pura (patuhi UU ITE, UU PDP & KUHP).</span>
     </div>
 
     <!-- TAB 1: 10 ORANG TERDEKAT -->
@@ -122,68 +194,132 @@
       <div class="flex items-center justify-between mb-3">
         <div>
           <h2 class="text-sm font-extrabold text-slate-900">10 Orang Terdekat</h2>
-          <p class="text-[11px] text-slate-500">Hanya menampilkan nama & estimasi jarak kasar.</p>
+          <p class="text-[11px] text-slate-500">Hanya nama & jarak estimasi (tanpa alamat/koordinat).</p>
         </div>
-        <button onclick="loadNearby10()" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-rose-600 transition">
+        <button onclick="loadNearby10(true)" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-rose-600 transition">
           <i data-lucide="refresh-cw" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div id="nearby-loading" class="py-10 text-center text-xs text-slate-400">Mencari 10 orang terdekat...</div>
-      <div id="nearby-empty" class="hidden py-10 text-center text-xs text-slate-400">Belum ada pengguna lain di sekitar.</div>
+      <div id="nearby-empty" class="hidden py-10 text-center text-xs text-slate-400">Belum ada pengguna lain sesuai filter saat ini.</div>
       <div id="nearby-list" class="space-y-2.5"></div>
     </main>
 
-    <!-- TAB 2: DAFTAR OBROLAN AKTIF -->
+    <!-- TAB 2: DAFTAR OBROLAN -->
     <section id="tab-rooms" class="hidden flex-1 overflow-y-auto no-scrollbar p-4 bg-white">
       <h2 class="text-sm font-extrabold text-slate-900 mb-1">Ruang Obrolan</h2>
-      <p class="text-[11px] text-slate-500 mb-3">Pilih teman terdekat yang sudah kamu mulai obrolannya.</p>
+      <p class="text-[11px] text-slate-500 mb-3">Data tersimpan instan di penyimpanan lokal browser & disinkronkan ke Sheet.</p>
 
-      <div id="rooms-loading" class="py-10 text-center text-xs text-slate-400">Memuat ruang obrolan...</div>
-      <div id="rooms-empty" class="hidden py-10 text-center text-xs text-slate-400">Belum ada obrolan dimulai. Cek tab 10 Terdekat.</div>
+      <div id="rooms-empty" class="hidden py-10 text-center text-xs text-slate-400">Belum ada obrolan dimulai.</div>
       <div id="rooms-list" class="space-y-2.5"></div>
     </section>
 
+    <!-- TAB 3: MODE & GENDER -->
+    <section id="tab-prefs" class="hidden flex-1 overflow-y-auto no-scrollbar p-4 bg-white space-y-4">
+      <div>
+        <h2 class="text-sm font-extrabold text-slate-900">Pengaturan Gender & Mode</h2>
+        <p class="text-[11px] text-slate-500">Atur identitas gender, target pencarian, dan suasana obrolan.</p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Gender Saya</label>
+          <select id="pref-gender-saya" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold">
+            <option value="Pria">Pria</option>
+            <option value="Wanita">Wanita</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Siapa Yang Saya Cari</label>
+          <select id="pref-cari-gender" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold">
+            <option value="Semua">Semua Gender</option>
+            <option value="Wanita">Wanita</option>
+            <option value="Pria">Pria</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Mode Interaksi</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" id="mode-btn-FRIEND" onclick="selectPrefMode('FRIEND')"
+              class="p-3 rounded-xl border-2 border-rose-600 bg-rose-50 text-left transition">
+              <p class="text-xs font-extrabold text-rose-700">Friend Mode</p>
+              <p class="text-[10.5px] text-rose-900/75 mt-0.5">Santai, ngobrol seru & pertemanan</p>
+            </button>
+            <button type="button" id="mode-btn-MAKING_LOVE" onclick="selectPrefMode('MAKING_LOVE')"
+              class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-left transition">
+              <p class="text-xs font-extrabold text-slate-800">Making Love</p>
+              <p class="text-[10.5px] text-slate-500 mt-0.5">Hangat, romantis & kedekatan</p>
+            </button>
+          </div>
+        </div>
+
+        <button type="button" onclick="savePreferences()" id="btn-save-pref"
+          class="w-full py-3 rounded-xl bg-rose-600 text-white font-bold text-sm hover:bg-rose-700 transition">
+          Simpan & Terapkan ke 10 Terdekat
+        </button>
+      </div>
+
+      <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
+        <span class="font-bold">Aturan Komunitas:</span> Berhati-hati, jangan menjadi faker atau berpura-pura. Pelanggaran penipuan, penyalahgunaan data pribadi, atau konten melanggar hukum dapat berujung sanksi sesuai UU ITE, UU PDP, dan KUHP.
+      </div>
+    </section>
+
     <!-- Bottom Nav -->
-    <nav class="px-6 py-2.5 bg-white border-t border-slate-100 flex items-center justify-around shrink-0">
-      <button onclick="switchTab('nearby')" id="nav-nearby" class="flex flex-col items-center gap-1 text-rose-600">
+    <nav class="px-3 py-2 bg-white border-t border-slate-100 flex items-center justify-around shrink-0">
+      <button onclick="switchTab('nearby')" id="nav-nearby" class="flex flex-col items-center gap-0.5 text-rose-600">
         <i data-lucide="radar" class="w-5 h-5"></i>
-        <span class="text-[11px] font-bold">10 Terdekat</span>
+        <span class="text-[10.5px] font-bold">10 Terdekat</span>
       </button>
-      <button onclick="switchTab('rooms')" id="nav-rooms" class="flex flex-col items-center gap-1 text-slate-400">
+      <button onclick="switchTab('rooms')" id="nav-rooms" class="flex flex-col items-center gap-0.5 text-slate-400">
         <i data-lucide="message-square" class="w-5 h-5"></i>
-        <span class="text-[11px] font-bold">Obrolan</span>
+        <span class="text-[10.5px] font-bold">Obrolan</span>
       </button>
-      <button onclick="logoutUser()" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+      <button onclick="switchTab('prefs')" id="nav-prefs" class="flex flex-col items-center gap-0.5 text-slate-400">
+        <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+        <span class="text-[10.5px] font-bold">Mode & Gender</span>
+      </button>
+      <button onclick="logoutUser()" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600">
         <i data-lucide="log-out" class="w-5 h-5"></i>
-        <span class="text-[11px] font-bold">Keluar</span>
+        <span class="text-[10.5px] font-bold">Keluar</span>
       </button>
     </nav>
   </div>
 
-  <!-- ==================== 3. RUANG CHAT ANONIM (POLLING 3s + COOLDOWN 30s) ==================== -->
+  <!-- ==================== 3. RUANG CHAT (INSTAN LOCALSTORAGE + TARIK PESAN + BLOK + 5s COOLDOWN) ==================== -->
   <div id="view-chat" class="hidden absolute inset-0 z-30 bg-white flex flex-col">
-    <header class="px-4 py-3 bg-white border-b border-slate-100 flex items-center gap-3 shrink-0">
-      <button onclick="closeChat()" class="p-1.5 -ml-1.5 rounded-full hover:bg-slate-100 text-slate-700">
-        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    <header class="px-3.5 py-2.5 bg-white border-b border-slate-100 flex items-center justify-between gap-2 shrink-0">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <button onclick="closeChat()" class="p-1.5 -ml-1 rounded-full hover:bg-slate-100 text-slate-700">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </button>
+        <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-600 font-extrabold text-sm flex items-center justify-center shrink-0" id="chat-avatar">
+          A
+        </div>
+        <div class="min-w-0">
+          <h3 id="chat-title" class="text-sm font-extrabold text-slate-900 truncate">-</h3>
+          <p id="chat-sub" class="text-[10.5px] text-slate-500 truncate">-</p>
+        </div>
+      </div>
+
+      <button type="button" onclick="blockCurrentPartner()"
+        class="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-extrabold flex items-center gap-1 shrink-0 transition">
+        <i data-lucide="ban" class="w-3.5 h-3.5"></i> Blokir
       </button>
-      <div class="w-9 h-9 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-extrabold text-sm shrink-0" id="chat-avatar">
-        A
-      </div>
-      <div class="flex-1 min-w-0">
-        <h3 id="chat-title" class="text-sm font-extrabold text-slate-900 truncate">-</h3>
-        <p id="chat-subtitle" class="text-[11px] text-slate-500 truncate">Lokasi terdekat</p>
-      </div>
     </header>
 
-    <div class="px-4 py-1.5 bg-amber-50 border-b border-amber-100 text-[10px] text-amber-900 font-medium text-center shrink-0">
-      Tetap berhati-hati. Jangan menjadi faker dan jangan berpura-pura.
+    <!-- Interaksi Cepat / Icebreaker -->
+    <div id="icebreaker-bar" class="px-3 py-2 bg-slate-50 border-b border-slate-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+      <!-- Diisi dinamis sesuai mode FRIEND atau MAKING_LOVE -->
     </div>
 
-    <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2.5 bg-slate-50"></div>
+    <!-- Area Pesan -->
+    <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-2.5 bg-slate-50/70"></div>
 
+    <!-- Input Bar (Cooldown 5 Detik) -->
     <form id="chat-form" class="p-3 bg-white border-t border-slate-100 flex items-center gap-2 shrink-0">
-      <input type="text" id="chat-input" placeholder="Ketik pesan..." autocomplete="off"
+      <input type="text" id="chat-input" placeholder="Tulis pesan..." autocomplete="off"
         class="flex-1 px-4 py-2.5 rounded-full bg-slate-100 text-sm focus:outline-none focus:bg-white border border-transparent focus:border-rose-400 transition" />
       <button type="submit" id="btn-send"
         class="px-4 py-2.5 rounded-full bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed transition shrink-0">
@@ -195,16 +331,48 @@
 </div>
 
 <script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbxNGLTdSWrf1cdoqoYF2wRosF8vFAas4TMZLcHt-llTTVRti406CddEZ3QnakTWAisf/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbw47ea0F0emb6TecJxCkAElbej9dTKBXqdau_aKknnQbRwmPZRmo7NBtEx65eNXb5lgWg/exec';
 
-  let currentUser = JSON.parse(localStorage.getItem('anon_user') || 'null');
+  let currentUser = JSON.parse(localStorage.getItem('anon_v2_user') || 'null');
   let coords = { lat: 0, lng: 0 };
+  let selectedPrefMode = currentUser?.mode || 'FRIEND';
   let activeRoom = null;
   let pollTimer = null;
   let cdTimer = null;
 
   lucide.createIcons();
 
+  // =========================================================================
+  // LOCALSTORAGE CACHE HELPERS
+  // =========================================================================
+  function getNearbyCacheKey() {
+    return `anon_v2_nearby_${currentUser.id}_${currentUser.genderSaya}_${currentUser.cariGender}_${currentUser.mode}`;
+  }
+  function getRoomsCacheKey() {
+    return `anon_v2_rooms_${currentUser.id}`;
+  }
+  function getMsgsCacheKey(connId) {
+    return `anon_v2_msgs_${connId}`;
+  }
+
+  function readCache(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function writeCache(key, val) {
+    try {
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // INIT & GPS
+  // =========================================================================
   window.addEventListener('DOMContentLoaded', () => {
     if (currentUser && currentUser.id) {
       enterMain();
@@ -214,28 +382,45 @@
     }
   });
 
+  function setAuthMode(mode) {
+    const isLogin = mode === 'login';
+    document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+    document.getElementById('form-register').classList.toggle('hidden', isLogin);
+
+    const btnLogin = document.getElementById('tab-btn-login');
+    const btnReg = document.getElementById('tab-btn-register');
+
+    if (isLogin) {
+      btnLogin.className = 'py-2 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-xs transition';
+      btnReg.className = 'py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition';
+    } else {
+      btnReg.className = 'py-2 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-xs transition';
+      btnLogin.className = 'py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition';
+    }
+  }
+
   function captureGPS(syncServer) {
-    const statusEl = document.getElementById('auth-loc-status');
+    const regStatus = document.getElementById('reg-loc-status');
     if (!navigator.geolocation) {
-      if (statusEl) statusEl.textContent = 'GPS tidak didukung browser';
+      if (regStatus) regStatus.textContent = 'GPS tidak didukung';
       return;
     }
-    if (statusEl) statusEl.textContent = 'Mengambil lokasi...';
+    if (regStatus) regStatus.textContent = 'Mengambil titik lokasi...';
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         coords.lat = pos.coords.latitude;
         coords.lng = pos.coords.longitude;
-        if (statusEl) {
-          statusEl.textContent = 'Lokasi siap digunakan';
-          statusEl.classList.replace('text-slate-600', 'text-emerald-600');
+        if (regStatus) {
+          regStatus.textContent = 'Lokasi siap (jarak dihitung otomatis)';
+          regStatus.classList.replace('text-slate-600', 'text-emerald-600');
         }
         if (syncServer && currentUser) {
           await postApi({ action: 'updateLocation', userId: currentUser.id, lat: coords.lat, lng: coords.lng });
         }
       },
       () => {
-        if (statusEl) statusEl.textContent = 'Izinkan akses lokasi di HP';
+        if (regStatus) regStatus.textContent = 'Izinkan lokasi di browser HP';
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -243,74 +428,178 @@
 
   async function updateLocationNow() {
     const label = document.getElementById('btn-loc-text');
-    label.textContent = 'Memperbarui...';
+    label.textContent = 'Update...';
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         coords.lat = pos.coords.latitude;
         coords.lng = pos.coords.longitude;
         await postApi({ action: 'updateLocation', userId: currentUser.id, lat: coords.lat, lng: coords.lng });
-        label.textContent = 'Lokasi Updated';
-        setTimeout(() => { label.textContent = 'Perbarui Lokasi'; }, 2000);
-        loadNearby10();
+        label.textContent = 'Updated';
+        setTimeout(() => { label.textContent = 'Lokasi'; }, 1800);
+        loadNearby10(true);
       },
       () => {
-        label.textContent = 'Gagal GPS';
-        setTimeout(() => { label.textContent = 'Perbarui Lokasi'; }, 2000);
+        label.textContent = 'Gagal';
+        setTimeout(() => { label.textContent = 'Lokasi'; }, 1800);
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
   }
 
-  document.getElementById('auth-form').addEventListener('submit', async (e) => {
+  // =========================================================================
+  // LOGIN & REGISTER HANDLERS
+  // =========================================================================
+  document.getElementById('form-login').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const errEl = document.getElementById('auth-error');
-    const btn = document.getElementById('btn-auth');
+    const errEl = document.getElementById('login-error');
+    const btn = document.getElementById('btn-login');
     errEl.classList.add('hidden');
     btn.disabled = true;
-    btn.textContent = 'Memproses...';
+    btn.textContent = 'Memeriksa akun...';
 
     try {
       const res = await postApi({
-        action: 'auth',
-        username: document.getElementById('auth-username').value.trim(),
-        password: document.getElementById('auth-password').value.trim(),
-        namaTampil: document.getElementById('auth-nama').value.trim(),
+        action: 'login',
+        username: document.getElementById('login-username').value.trim(),
+        password: document.getElementById('login-password').value.trim()
+      });
+
+      if (res.status === 'success') {
+        currentUser = res.user;
+        localStorage.setItem('anon_v2_user', JSON.stringify(currentUser));
+        enterMain();
+        captureGPS(true);
+      } else {
+        errEl.textContent = res.message || 'Login gagal.';
+        errEl.classList.remove('hidden');
+      }
+    } catch (err) {
+      errEl.textContent = 'Gagal terhubung ke server.';
+      errEl.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Masuk Sekarang';
+    }
+  });
+
+  document.getElementById('form-register').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('reg-error');
+    const btn = document.getElementById('btn-register');
+    errEl.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Mendaftarkan...';
+
+    try {
+      const res = await postApi({
+        action: 'register',
+        username: document.getElementById('reg-username').value.trim(),
+        password: document.getElementById('reg-password').value.trim(),
+        namaTampil: document.getElementById('reg-nama').value.trim(),
+        genderSaya: document.getElementById('reg-gender-saya').value,
+        cariGender: document.getElementById('reg-cari-gender').value,
+        mode: document.getElementById('reg-mode').value,
         lat: coords.lat,
         lng: coords.lng
       });
 
       if (res.status === 'success') {
         currentUser = res.user;
-        localStorage.setItem('anon_user', JSON.stringify(currentUser));
+        localStorage.setItem('anon_v2_user', JSON.stringify(currentUser));
         enterMain();
         captureGPS(true);
       } else {
-        errEl.textContent = res.message || 'Gagal masuk.';
+        errEl.textContent = res.message || 'Registrasi gagal.';
         errEl.classList.remove('hidden');
       }
     } catch (err) {
-      errEl.textContent = 'Gagal terhubung ke server. Cek API_URL.';
+      errEl.textContent = 'Gagal terhubung ke server.';
       errEl.classList.remove('hidden');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Masuk / Daftar Otomatis';
+      btn.textContent = 'Daftar Akun Baru';
     }
   });
 
+  // =========================================================================
+  // MAIN APP, PREFERENSI MODE & GENDER
+  // =========================================================================
   function enterMain() {
     document.getElementById('view-auth').classList.add('hidden');
     document.getElementById('view-main').classList.remove('hidden');
-    document.getElementById('header-user-info').textContent = `${currentUser.namaTampil} (@${currentUser.username})`;
-    loadNearby10();
+    refreshHeaderAndPrefs();
+    loadNearby10(false);
+    loadRooms(false);
+  }
+
+  function refreshHeaderAndPrefs() {
+    const modeLabel = currentUser.mode === 'MAKING_LOVE' ? 'MAKING LOVE MODE' : 'FRIEND MODE';
+    const badge = document.getElementById('badge-mode-header');
+    badge.textContent = modeLabel;
+    badge.className = currentUser.mode === 'MAKING_LOVE'
+      ? 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-pink-100 text-pink-700'
+      : 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-100 text-sky-700';
+
+    document.getElementById('header-meta').textContent =
+      `${currentUser.namaTampil} • Saya: ${currentUser.genderSaya} • Cari: ${currentUser.cariGender}`;
+
+    document.getElementById('pref-gender-saya').value = currentUser.genderSaya || 'Pria';
+    document.getElementById('pref-cari-gender').value = currentUser.cariGender || 'Semua';
+    selectPrefMode(currentUser.mode || 'FRIEND');
+  }
+
+  function selectPrefMode(mode) {
+    selectedPrefMode = mode;
+    const friendBtn = document.getElementById('mode-btn-FRIEND');
+    const loveBtn = document.getElementById('mode-btn-MAKING_LOVE');
+
+    if (mode === 'FRIEND') {
+      friendBtn.className = 'p-3 rounded-xl border-2 border-sky-600 bg-sky-50 text-left transition';
+      loveBtn.className = 'p-3 rounded-xl border border-slate-200 bg-slate-50 text-left transition';
+    } else {
+      loveBtn.className = 'p-3 rounded-xl border-2 border-rose-600 bg-rose-50 text-left transition';
+      friendBtn.className = 'p-3 rounded-xl border border-slate-200 bg-slate-50 text-left transition';
+    }
+  }
+
+  async function savePreferences() {
+    const btn = document.getElementById('btn-save-pref');
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
+
+    const genderSaya = document.getElementById('pref-gender-saya').value;
+    const cariGender = document.getElementById('pref-cari-gender').value;
+    const mode = selectedPrefMode;
+
+    currentUser.genderSaya = genderSaya;
+    currentUser.cariGender = cariGender;
+    currentUser.mode = mode;
+    localStorage.setItem('anon_v2_user', JSON.stringify(currentUser));
+    refreshHeaderAndPrefs();
+
+    try {
+      await postApi({
+        action: 'updatePreferences',
+        userId: currentUser.id,
+        genderSaya,
+        cariGender,
+        mode
+      });
+    } catch (e) {}
+
+    btn.disabled = false;
+    btn.textContent = 'Simpan & Terapkan ke 10 Terdekat';
+    switchTab('nearby');
+    loadNearby10(true);
   }
 
   function logoutUser() {
-    localStorage.removeItem('anon_user');
+    localStorage.removeItem('anon_v2_user');
     location.reload();
   }
 
   function switchTab(tab) {
-    ['nearby', 'rooms'].forEach(t => {
+    ['nearby', 'rooms', 'prefs'].forEach(t => {
       document.getElementById(`tab-${t}`).classList.add('hidden');
       const nav = document.getElementById(`nav-${t}`);
       nav.classList.remove('text-rose-600');
@@ -322,127 +611,224 @@
     active.classList.remove('text-slate-400');
     active.classList.add('text-rose-600');
 
-    if (tab === 'nearby') loadNearby10();
-    if (tab === 'rooms') loadRooms();
+    if (tab === 'nearby') loadNearby10(true);
+    if (tab === 'rooms') loadRooms(true);
   }
 
-  async function loadNearby10() {
-    const loading = document.getElementById('nearby-loading');
-    const empty = document.getElementById('nearby-empty');
+  // =========================================================================
+  // 10 ORANG TERDEKAT (INSTAN DARI LOCALSTORAGE + SYNC SERVER)
+  // =========================================================================
+  function renderNearbyList(items) {
     const list = document.getElementById('nearby-list');
-
-    loading.classList.remove('hidden');
-    empty.classList.add('hidden');
+    const empty = document.getElementById('nearby-empty');
     list.innerHTML = '';
 
-    try {
-      const url = `${API_URL}?action=getNearby10&userId=${encodeURIComponent(currentUser.id)}`;
-      const res = await fetch(url).then(r => r.json());
-      loading.classList.add('hidden');
-
-      if (res.status === 'success' && res.nearby.length > 0) {
-        res.nearby.forEach(person => {
-          const initial = (person.namaTampil || '?').charAt(0).toUpperCase();
-          const card = document.createElement('div');
-          card.className = 'p-3.5 rounded-2xl bg-white border border-slate-100 shadow-xs flex items-center justify-between gap-3';
-          card.innerHTML = `
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-600 font-extrabold text-sm flex items-center justify-center shrink-0">
-                ${escapeHtml(initial)}
-              </div>
-              <div class="min-w-0">
-                <h3 class="text-sm font-bold text-slate-900 truncate">${escapeHtml(person.namaTampil)}</h3>
-                <p class="text-xs text-slate-500 font-medium">Jarak: ${escapeHtml(person.jarakText)}</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-1.5 shrink-0">
-              <button onclick="handleConnect('${person.id}', '${escapeJs(person.namaTampil)}', '${escapeJs(person.jarakText)}', 'CHAT')"
-                class="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 active:scale-95 transition">
-                Chat
-              </button>
-              <button onclick="handleConnect('${person.id}', '${escapeJs(person.namaTampil)}', '${escapeJs(person.jarakText)}', 'SKIP')"
-                class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-500 text-xs font-bold hover:bg-slate-200 active:scale-95 transition">
-                Lewati
-              </button>
-            </div>
-          `;
-          list.appendChild(card);
-        });
-      } else {
-        empty.classList.remove('hidden');
-      }
-    } catch (e) {
-      loading.classList.add('hidden');
+    if (!items || items.length === 0) {
       empty.classList.remove('hidden');
+      return;
     }
-  }
+    empty.classList.add('hidden');
 
-  async function handleConnect(toId, namaTampil, jarakText, mode) {
-    const res = await postApi({
-      action: 'connectUser',
-      fromId: currentUser.id,
-      toId: toId,
-      mode: mode
+    items.forEach(person => {
+      const initial = (person.namaTampil || '?').charAt(0).toUpperCase();
+      const modeBadge = person.mode === 'MAKING_LOVE'
+        ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600">Making Love</span>`
+        : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700">Friend Mode</span>`;
+
+      const card = document.createElement('div');
+      card.className = 'p-3.5 rounded-2xl bg-white border border-slate-100 shadow-2xs flex items-center justify-between gap-2.5';
+      card.innerHTML = `
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-800 font-extrabold text-sm flex items-center justify-center shrink-0">
+            ${escapeHtml(initial)}
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <h3 class="text-sm font-bold text-slate-900 truncate">${escapeHtml(person.namaTampil)}</h3>
+              ${modeBadge}
+            </div>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">${escapeHtml(person.jarakLabel)} • ${escapeHtml(person.genderSaya || '')}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="connectAction('${person.id}', '${escapeJs(person.namaTampil)}', '${escapeJs(person.jarakLabel)}', '${person.mode || 'FRIEND'}', 'CHAT')"
+            class="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 active:scale-95 transition">
+            Chat
+          </button>
+          <button onclick="blockDirect('${person.id}')" title="Blokir"
+            class="p-1.5 rounded-xl bg-slate-100 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition">
+            <i data-lucide="ban" class="w-4 h-4"></i>
+          </button>
+        </div>
+      `;
+      list.appendChild(card);
     });
-
-    if (res.status === 'success') {
-      if (mode === 'CHAT') {
-        openChat(res.connId, namaTampil, `Jarak: ${jarakText}`);
-      } else {
-        loadNearby10();
-      }
-    }
+    lucide.createIcons();
   }
 
-  async function loadRooms() {
-    const loading = document.getElementById('rooms-loading');
-    const empty = document.getElementById('rooms-empty');
-    const list = document.getElementById('rooms-list');
+  async function loadNearby10(syncRemote = true) {
+    const cached = readCache(getNearbyCacheKey(), []);
+    renderNearbyList(cached);
 
-    loading.classList.remove('hidden');
-    empty.classList.add('hidden');
-    list.innerHTML = '';
+    if (!syncRemote) return;
 
     try {
-      const url = `${API_URL}?action=getRooms&userId=${encodeURIComponent(currentUser.id)}`;
-      const res = await fetch(url).then(r => r.json());
-      loading.classList.add('hidden');
-
-      if (res.status === 'success' && res.rooms.length > 0) {
-        res.rooms.forEach(room => {
-          const initial = (room.partner.namaTampil || '?').charAt(0).toUpperCase();
-          const el = document.createElement('div');
-          el.className = 'p-3.5 rounded-2xl bg-slate-50 hover:bg-rose-50/60 border border-slate-100 flex items-center gap-3 cursor-pointer transition';
-          el.onclick = () => openChat(room.connId, room.partner.namaTampil, 'Obrolan anonim aktif');
-          el.innerHTML = `
-            <div class="w-10 h-10 rounded-full bg-white text-rose-600 border border-rose-100 font-extrabold text-sm flex items-center justify-center shrink-0">
-              ${escapeHtml(initial)}
-            </div>
-            <div class="flex-1 min-w-0">
-              <h4 class="text-sm font-bold text-slate-900 truncate">${escapeHtml(room.partner.namaTampil)}</h4>
-              <p class="text-xs text-slate-500 truncate">Ketuk untuk membuka chat</p>
-            </div>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
-          `;
-          list.appendChild(el);
-        });
-        lucide.createIcons();
-      } else {
-        empty.classList.remove('hidden');
+      const qs = new URLSearchParams({
+        action: 'getNearby10',
+        userId: currentUser.id,
+        genderSaya: currentUser.genderSaya,
+        cariGender: currentUser.cariGender,
+        mode: currentUser.mode
+      });
+      const res = await fetch(`${API_URL}?${qs.toString()}`).then(r => r.json());
+      if (res.status === 'success') {
+        writeCache(getNearbyCacheKey(), res.nearby);
+        renderNearbyList(res.nearby);
       }
-    } catch (e) {
-      loading.classList.add('hidden');
-      empty.classList.remove('hidden');
-    }
+    } catch (e) {}
   }
 
-  function openChat(connId, namaTampil, subtitle) {
-    activeRoom = { connId, namaTampil, subtitle };
+  async function connectAction(toId, namaTampil, jarakLabel, mode, actionType) {
+    const connId = 'RM-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+    // Update cache room secara instan agar langsung ada tanpa menunggu
+    const rooms = readCache(getRoomsCacheKey(), []);
+    const existingIdx = rooms.findIndex(r => r.partner && r.partner.id === toId);
+    const activeConnId = existingIdx >= 0 ? rooms[existingIdx].connId : connId;
+
+    if (existingIdx === -1) {
+      rooms.unshift({
+        connId: activeConnId,
+        partner: { id: toId, namaTampil, mode }
+      });
+      writeCache(getRoomsCacheKey(), rooms);
+    }
+
+    openChat(activeConnId, toId, namaTampil, `${jarakLabel} • ${mode === 'MAKING_LOVE' ? 'Making Love' : 'Friend Mode'}`, mode);
+
+    try {
+      const res = await postApi({
+        action: 'connectUser',
+        fromId: currentUser.id,
+        toId,
+        mode: actionType
+      });
+      if (res.status === 'success' && res.connId && res.connId !== activeConnId) {
+        activeRoom.connId = res.connId;
+        const updatedRooms = readCache(getRoomsCacheKey(), []).map(r =>
+          r.connId === activeConnId ? { ...r, connId: res.connId } : r
+        );
+        writeCache(getRoomsCacheKey(), updatedRooms);
+      }
+    } catch (e) {}
+  }
+
+  async function blockDirect(targetId) {
+    const cached = readCache(getNearbyCacheKey(), []).filter(p => p.id !== targetId);
+    writeCache(getNearbyCacheKey(), cached);
+    renderNearbyList(cached);
+
+    try {
+      await postApi({ action: 'blockUser', blockerId: currentUser.id, blockedId: targetId });
+      loadNearby10(true);
+      loadRooms(true);
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // ROOMS & INSTANT LOCALSTORAGE CHAT + TARIK PESAN + BLOK
+  // =========================================================================
+  function renderRoomsList(rooms) {
+    const list = document.getElementById('rooms-list');
+    const empty = document.getElementById('rooms-empty');
+    list.innerHTML = '';
+
+    if (!rooms || rooms.length === 0) {
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+
+    rooms.forEach(room => {
+      const initial = (room.partner.namaTampil || '?').charAt(0).toUpperCase();
+      const el = document.createElement('div');
+      el.className = 'p-3.5 rounded-2xl bg-slate-50 hover:bg-rose-50/60 border border-slate-100 flex items-center gap-3 cursor-pointer transition';
+      el.onclick = () => openChat(
+        room.connId,
+        room.partner.id,
+        room.partner.namaTampil,
+        room.partner.mode === 'MAKING_LOVE' ? 'Making Love Mode' : 'Friend Mode',
+        room.partner.mode || 'FRIEND'
+      );
+      el.innerHTML = `
+        <div class="w-10 h-10 rounded-full bg-white text-rose-600 border border-rose-100 font-extrabold text-sm flex items-center justify-center shrink-0">
+          ${escapeHtml(initial)}
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="text-sm font-bold text-slate-900 truncate">${escapeHtml(room.partner.namaTampil)}</h4>
+          <p class="text-xs text-slate-500 truncate">Tersimpan lokal • Ketuk untuk buka</p>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+      `;
+      list.appendChild(el);
+    });
+    lucide.createIcons();
+  }
+
+  async function loadRooms(syncRemote = true) {
+    const cached = readCache(getRoomsCacheKey(), []);
+    renderRoomsList(cached);
+    if (!syncRemote) return;
+
+    try {
+      const res = await fetch(`${API_URL}?action=getRooms&userId=${encodeURIComponent(currentUser.id)}`).then(r => r.json());
+      if (res.status === 'success') {
+        writeCache(getRoomsCacheKey(), res.rooms);
+        renderRoomsList(res.rooms);
+      }
+    } catch (e) {}
+  }
+
+  function renderIcebreakers(mode) {
+    const bar = document.getElementById('icebreaker-bar');
+    const prompts = mode === 'MAKING_LOVE'
+      ? [
+          'Hai, suasananya hangat nih hari ini ✨',
+          'Kamu tipe yang suka ngobrol malam atau pagi?',
+          'Jujur ya, hal kecil apa yang bikin kamu senyum?'
+        ]
+      : [
+          'Halo! Lagi santai atau sibuk nih?',
+          'Rekomendasi tempat ngopi atau makan enak dong',
+          'Lagi suka dengerin lagu apa akhir-akhir ini?'
+        ];
+
+    bar.innerHTML = prompts.map(p => `
+      <button type="button" onclick="useIcebreaker('${escapeJs(p)}')"
+        class="px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-semibold text-slate-700 hover:border-rose-300 hover:text-rose-600 whitespace-nowrap transition shrink-0">
+        ${escapeHtml(p)}
+      </button>
+    `).join('');
+  }
+
+  function useIcebreaker(text) {
+    const input = document.getElementById('chat-input');
+    input.value = text;
+    input.focus();
+  }
+
+  function openChat(connId, partnerId, namaTampil, subtitle, mode = 'FRIEND') {
+    activeRoom = { connId, partnerId, namaTampil, subtitle, mode };
     document.getElementById('chat-avatar').textContent = (namaTampil || '?').charAt(0).toUpperCase();
     document.getElementById('chat-title').textContent = namaTampil;
-    document.getElementById('chat-subtitle').textContent = subtitle;
-    document.getElementById('chat-box').innerHTML = '';
+    document.getElementById('chat-sub').textContent = subtitle;
+    renderIcebreakers(mode);
     document.getElementById('view-chat').classList.remove('hidden');
+
+    // Langsung render dari LocalStorage tanpa tunggu loading
+    const cachedMsgs = readCache(getMsgsCacheKey(connId), []);
+    renderMessages(cachedMsgs, true);
 
     syncCooldown();
     fetchMessages();
@@ -462,28 +848,44 @@
     try {
       const url = `${API_URL}?action=getMessages&connId=${encodeURIComponent(activeRoom.connId)}`;
       const res = await fetch(url).then(r => r.json());
-      if (res.status === 'success') renderMessages(res.messages);
+      if (res.status === 'success') {
+        writeCache(getMsgsCacheKey(activeRoom.connId), res.messages);
+        renderMessages(res.messages, false);
+      }
     } catch (e) {}
   }
 
-  function renderMessages(messages) {
+  function renderMessages(messages, forceScrollBottom = false) {
     const box = document.getElementById('chat-box');
-    const nearBottom = box.scrollHeight - box.scrollTop <= box.clientHeight + 80;
+    const nearBottom = forceScrollBottom || (box.scrollHeight - box.scrollTop <= box.clientHeight + 90);
 
-    if (!messages.length) {
-      box.innerHTML = `<div class="text-center text-xs text-slate-400 my-8">Mulai obrolan secara jujur dan sopan.</div>`;
+    if (!messages || messages.length === 0) {
+      box.innerHTML = `<div class="text-center text-xs text-slate-400 my-8">Mulai obrolan secara jujur. Jangan jadi faker atau berpura-pura.</div>`;
       return;
     }
 
     box.innerHTML = messages.map(m => {
       const isMe = m.senderId === currentUser.id;
       const waktu = new Date(m.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const unsent = Boolean(m.isUnsent);
+
+      const bubbleClass = unsent
+        ? 'bg-slate-200/80 text-slate-500 italic'
+        : (isMe ? 'bg-rose-600 text-white rounded-br-sm' : 'bg-white text-slate-800 border border-slate-200/80 rounded-bl-sm');
+
+      const unsendBtn = (isMe && !unsent)
+        ? `<button type="button" onclick="unsendChat('${escapeJs(m.chatId)}')" class="text-[10px] font-bold text-slate-400 hover:text-rose-600 ml-1.5">Tarik</button>`
+        : '';
+
       return `
         <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-          <div class="max-w-[78%] px-4 py-2.5 rounded-2xl text-sm ${isMe ? 'bg-rose-600 text-white rounded-br-sm' : 'bg-white text-slate-800 border border-slate-200/80 rounded-bl-sm'}">
+          <div class="max-w-[78%] px-4 py-2.5 rounded-2xl text-sm ${bubbleClass}">
             ${escapeHtml(m.message)}
           </div>
-          <span class="text-[10px] text-slate-400 mt-1 px-1">${waktu}</span>
+          <div class="flex items-center mt-1 px-1">
+            <span class="text-[10px] text-slate-400">${waktu}</span>
+            ${unsendBtn}
+          </div>
         </div>
       `;
     }).join('');
@@ -491,11 +893,54 @@
     if (nearBottom) box.scrollTop = box.scrollHeight;
   }
 
-  function getCdKey() {
-    return `anon_cd_${currentUser.id}_${activeRoom ? activeRoom.connId : ''}`;
+  async function unsendChat(chatId) {
+    if (!activeRoom) return;
+    const key = getMsgsCacheKey(activeRoom.connId);
+    const msgs = readCache(key, []).map(m =>
+      m.chatId === chatId ? { ...m, message: 'Pesan ini telah ditarik', isUnsent: true } : m
+    );
+    writeCache(key, msgs);
+    renderMessages(msgs, false);
+
+    try {
+      await postApi({
+        action: 'unsendMessage',
+        chatId: chatId,
+        senderId: currentUser.id
+      });
+    } catch (e) {}
   }
 
-  function startCd(seconds = 30) {
+  async function blockCurrentPartner() {
+    if (!activeRoom || !activeRoom.partnerId) return;
+    const targetId = activeRoom.partnerId;
+
+    // Hapus dari cache nearby & rooms
+    const nearby = readCache(getNearbyCacheKey(), []).filter(p => p.id !== targetId);
+    writeCache(getNearbyCacheKey(), nearby);
+    renderNearbyList(nearby);
+
+    const rooms = readCache(getRoomsCacheKey(), []).filter(r => r.partner?.id !== targetId);
+    writeCache(getRoomsCacheKey(), rooms);
+    renderRoomsList(rooms);
+
+    closeChat();
+
+    try {
+      await postApi({ action: 'blockUser', blockerId: currentUser.id, blockedId: targetId });
+      loadNearby10(true);
+      loadRooms(true);
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // COOLDOWN 5 DETIK (GANTI 30 DETIK) + INSTANT SEND
+  // =========================================================================
+  function getCdKey() {
+    return `anon_v2_cd5_${currentUser.id}_${activeRoom ? activeRoom.connId : ''}`;
+  }
+
+  function startCd5(seconds = 5) {
     localStorage.setItem(getCdKey(), String(Date.now() + seconds * 1000));
     syncCooldown();
   }
@@ -531,21 +976,40 @@
     const text = input.value.trim();
     if (!text) return;
 
-    input.value = '';
-    startCd(30);
+    const chatId = 'MSG-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+    const nowIso = new Date().toISOString();
 
-    const res = await postApi({
-      action: 'sendMessage',
-      connId: activeRoom.connId,
+    // Tampilkan langsung di layar & simpan ke LocalStorage tanpa menunggu server
+    const cacheKey = getMsgsCacheKey(activeRoom.connId);
+    const currentMsgs = readCache(cacheKey, []);
+    currentMsgs.push({
+      chatId: chatId,
       senderId: currentUser.id,
-      message: text
+      message: text,
+      isUnsent: false,
+      timestamp: nowIso
     });
+    writeCache(cacheKey, currentMsgs);
+    renderMessages(currentMsgs, true);
 
-    if (res.status === 'cooldown') {
-      startCd(res.remainingSeconds);
-    } else if (res.status === 'success') {
-      fetchMessages();
-    }
+    input.value = '';
+    startCd5(5);
+
+    try {
+      const res = await postApi({
+        action: 'sendMessage',
+        chatId: chatId,
+        connId: activeRoom.connId,
+        senderId: currentUser.id,
+        message: text
+      });
+
+      if (res.status === 'cooldown') {
+        startCd5(res.remainingSeconds);
+      } else if (res.status === 'success') {
+        fetchMessages();
+      }
+    } catch (err) {}
   });
 
   async function postApi(payload) {
